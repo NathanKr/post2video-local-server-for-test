@@ -82,29 +82,34 @@ the goal was to serve the test files over HTTP using an adequate solution.
 
 ---
 
-### 4. Testing Framework Integration — vitest-puppeteer / sirv
-**Description:** Use dedicated testing utilities that handle server lifecycle automatically. `vitest-puppeteer` provides server config in your vitest setup, or use `sirv` with globalSetup hooks. The server starts before tests and stops after, with no manual lifecycle code needed.
+### 4. Vitest Global Setup + Lightweight Static Server
+
+**Description:**  
+Use Vitest’s `globalSetup` and `globalTeardown` hooks to start a lightweight
+static HTTP server (e.g., `sirv` or a minimal Node HTTP server) once before
+the test suite runs and shut it down after all tests complete.
 
 #### When to choose
-* **Zero Boilerplate:** You want the framework to manage server start/stop without writing lifecycle code.
-* **Best Practice Integration:** Already using Vitest + Puppeteer and want the recommended approach.
-* **Automatic Cleanup:** Need guaranteed teardown without manual beforeAll/afterAll hooks.
+- You want the test framework to manage server lifecycle centrally
+- You prefer one-time setup instead of per-test hooks
+- You want predictable startup and teardown behavior
 
 #### Trade-offs
-* **Framework Lock-in:** Tightly coupled to Vitest or your specific test runner.
-* **Limited Customization:** Server behavior is configured declaratively, not programmatically.
-* **Additional Dependency:** Adds another package to your testing stack.
+- Requires familiarity with Vitest global configuration
+- Server logic still needs to be implemented or configured
+- Ties the setup to Vitest’s execution model
 
 ---
 
 ### Summary Table
 
 | Option | Dependencies | Complexity | Control | Lifecycle |
-|--------|-------------|-----------|---------|-----------|
+|------|-------------|-----------|---------|-----------|
 | Node HTTP | None | Minimal | Full | Manual |
 | CLI Server | CLI tool | Minimal | Limited | External |
 | Express | express | Medium | Full | Manual |
-| vitest-puppeteer | vitest plugin | Low | Medium | Automatic |
+| Vitest Global Setup + Static Server | sirv (optional) | Low | Medium | Framework-managed |
+
 
 ---
 
