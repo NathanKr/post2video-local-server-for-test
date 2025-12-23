@@ -82,13 +82,43 @@ the goal was to serve the test files over HTTP using an adequate solution.
 
 ---
 
+### 4. Testing Framework Integration — vitest-puppeteer / sirv
+**Description:** Use dedicated testing utilities that handle server lifecycle automatically. `vitest-puppeteer` provides server config in your vitest setup, or use `sirv` with globalSetup hooks. The server starts before tests and stops after, with no manual lifecycle code needed.
+
+#### When to choose
+* **Zero Boilerplate:** You want the framework to manage server start/stop without writing lifecycle code.
+* **Best Practice Integration:** Already using Vitest + Puppeteer and want the recommended approach.
+* **Automatic Cleanup:** Need guaranteed teardown without manual beforeAll/afterAll hooks.
+
+#### Trade-offs
+* **Framework Lock-in:** Tightly coupled to Vitest or your specific test runner.
+* **Limited Customization:** Server behavior is configured declaratively, not programmatically.
+* **Additional Dependency:** Adds another package to your testing stack.
+
+---
+
 ### Summary Table
 
-| Option | Complexity | Dependency Count | Control Level |
-| :--- | :--- | :--- | :--- |
-| **Node HTTP** | Minimal | 0 (Built-in) | High |
-| **CLI Server** | Minimal | 1 (External) | Low |
-| **Express** | Medium | High | Very High |
+| Option | Dependencies | Complexity | Control | Lifecycle |
+|--------|-------------|-----------|---------|-----------|
+| Node HTTP | None | Minimal | Full | Manual |
+| CLI Server | CLI tool | Minimal | Limited | External |
+| Express | express | Medium | Full | Manual |
+| vitest-puppeteer | vitest plugin | Low | Medium | Automatic |
+
+---
+
+### Recommendation
+
+**For most Vitest + Puppeteer projects:** Use **Option 4 (vitest-puppeteer)**. It provides the cleanest developer experience with automatic lifecycle management and minimal boilerplate.
+
+**If you need zero dependencies:** Use **Option 1 (Node HTTP)**. Perfect for learning projects or when you want complete control without external packages.
+
+**For quick prototyping or CI pipelines:** Use **Option 2 (CLI Server)**. Fastest setup and works well when server lifecycle is managed externally.
+
+**If you plan to add API mocking or dynamic content:** Use **Option 3 (Express)**. Worth the overhead if you know you'll need middleware or custom routes.
+
+---
 
 <h2>Code Structure</h2>
 ....
