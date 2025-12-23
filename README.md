@@ -24,10 +24,15 @@ the goal was to serve the test files over HTTP using an adequate solution.
 </ul>
 
 <h2>Installation</h2>
-....
+
+```bash
+pnpm i
+pnpx puppeteer browsers install chrome
+```
 
 
 <h2>Usage</h2>
+....
 
 
 
@@ -36,6 +41,7 @@ the goal was to serve the test files over HTTP using an adequate solution.
 <li>puppeteer</li>
 <li>vitest</li>
 <li>typescript</li>
+<li>sirv</li>
 </ul>
 
 ## Design Options
@@ -99,6 +105,9 @@ the test suite runs and shut it down after all tests complete.
 - Server logic still needs to be implemented or configured
 - Ties the setup to Vitest’s execution model
 
+
+**Note** : Despite the name, this "Global" setup is strictly scoped to a single execution of this specific config file, acting as a one-time orchestrator for all test files in that run.
+
 ---
 
 ### Summary Table
@@ -125,21 +134,37 @@ the test suite runs and shut it down after all tests complete.
 
 ---
 
+
+<h2>Static Server Implementation (sirv)</h2>
+<p>
+  To implement <strong>Option 4</strong>, this project utilizes <code>sirv</code>. 
+  It acts as the bridge between the local file system and the Puppeteer browser instance.
+</p>
+
+<h3>Why sirv?</h3>
+<ul>
+  <li><strong>Zero Configuration:</strong> Automatically handles Content-Type headers for various file extensions (HTML, JS, CSS).</li>
+  <li><strong>Performance:</strong> It is significantly faster than Express for static serving, which minimizes test startup latency.</li>
+  <li><strong>Middleware Mode:</strong> It can be easily integrated into the Vitest <code>globalSetup</code> lifecycle without spawning separate shell processes.</li>
+</ul>
+
+<h3>Configuration</h3>
+<p>
+  The server is instantiated in the <code>globalSetup</code> hook, ensuring that the 
+  entire test suite shares a single HTTP endpoint. This prevents port conflicts and 
+  reduces memory overhead during parallel test execution.
+</p>
+
 <h2>Code Structure</h2>
 ....
 
 <h2>Demo</h2>
-....
+without sirv => test error
 
-<h2>Points of Interest</h2>
-<ul>
-    <li>...</li>
-   
-</ul>
+<img src='./figs/without-sirv-error.png'/>
 
-<h2>References</h2>
-<ul>
-    <li>...</li>
-   
-</ul>
+without sirv and vitest => test success because localhost:3000 is mapped to test/data
+
+<img src='./figs/with-sirv-and-setup.png'/>
+
 

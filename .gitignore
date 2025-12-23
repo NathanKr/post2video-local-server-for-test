@@ -1,0 +1,55 @@
+# --- Core Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# --- Environment & Secrets ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- Puppeteer & Browsers ---
+# If Puppeteer downloads Chromium to your project root (common in CI/CD)
+.local-chromium/
+# Browser caches and user data directories
+.cache/puppeteer/
+.cache/ms-playwright/
+browser-data/
+
+# --- Vitest & Testing ---
+# Vitest cache and coverage reports
+.vitest-cache/
+coverage/
+# If you use Vitest UI, ignore the built assets
+dist-test/
+
+# --- Build & Output ---
+dist/
+build/
+out/
+
+# --- OS & IDE Files ---
+.DS_Store
+Thumbs.db
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# --- Logs & Runtime ---
+logs
+*.log
+npm-debug.log*
+pids
+*.pid
+*.seed
+*.pid.lock
