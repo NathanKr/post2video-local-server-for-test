@@ -37,25 +37,71 @@ typescript
 ....
 
 
-<h2>Design</h2>
+<h2>Design Options</h2>
 
-Design Options
+<h3>In-Process Server — Embedded Node HTTP Server (in code)</h3>
 
-<h3>Minimal Static HTTP Server</h3>
-Serve multiple static HTML files over HTTP using a lightweight Node.js server.
-This removes file:// limitations while keeping the setup simple and fully
-controlled for Puppeteer tests.
+Description
+Use Node’s built-in http module to serve static HTML files.
+The server is started and stopped programmatically from the test suite.
 
-<h3>Test-Controlled Server Lifecycle</h3>
-Start the static server before the test suite runs and shut it down afterward
-(e.g. via beforeAll / afterAll). This guarantees the HTTP endpoint is
-available when Puppeteer navigates between pages and avoids manual setup.
+When to choose
 
-<h3>Direct Page Navigation in Tests</h3>
-Navigate directly between static pages using real HTTP URLs
-(page.goto("http://localhost/...")) without abstractions such as routing
-frameworks or page object layers, keeping tests readable and proportional to
-the project size.
+You want zero dependencies
+
+You want full control
+
+Tests own the lifecycle
+
+Trade-offs
+
+Slightly more code
+
+You maintain the server logic
+
+<h3>Port Management — External Static Server Command</h3>
+
+Description
+Use a small CLI static server (http-server, serve, etc.) to host the HTML
+files, and point Puppeteer to http://localhost.
+
+When to choose
+
+Fastest setup
+
+Works great in CI
+
+No server code in repo
+
+Trade-offs
+
+Less control
+
+Server lifecycle handled outside tests
+
+<h3>The Express-Based Static Server</h3>
+
+Description
+Use Express to serve static HTML files via express.static.
+This allows easy extension later if routes, middleware, or APIs are needed.
+
+When to choose
+
+You expect future growth
+
+You may add dynamic behavior later
+
+Trade-offs
+
+Overkill for pure static testing
+
+Extra dependency
+
+Summary table (clarity)
+Option	How many to use	Complexity
+Node HTTP	Pick one	Minimal
+CLI server	Pick one	Minimal
+Express	Pick one	Medium
 
 
 <h2>Code Structure</h2>
