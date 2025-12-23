@@ -28,81 +28,67 @@ the goal was to serve the test files over HTTP using an adequate solution.
 
 
 <h2>Usage</h2>
-puppeteer
-vitest
-typescript
+
 
 
 <h2>Technologies Used</h2>
-....
+<ul>
+<li>puppeteer</li>
+<li>vitest</li>
+<li>typescript</li>
+</ul>
 
+## Design Options
 
-<h2>Design Options</h2>
+### 1. In-Process Server — Embedded Node HTTP Server
+**Description:** Use Node’s built-in `http` module to serve static HTML files. The server is started and stopped programmatically from the test suite.
 
-<h3>In-Process Server — Embedded Node HTTP Server (in code)</h3>
+#### When to choose
+* **Zero Dependencies:** You want to avoid adding third-party packages to the project.
+* **Full Control:** You need to customize the server behavior at a granular level.
+* **Integrated Lifecycle:** You want the test runner (Vitest) to own the start/stop process entirely.
 
-Description
-Use Node’s built-in http module to serve static HTML files.
-The server is started and stopped programmatically from the test suite.
+#### Trade-offs
+* **Maintenance:** You are responsible for maintaining the server logic and handling edge cases (like MIME types).
+* **Boilerplate:** Requires slightly more initial code to set up the file reading and response handling.
 
-When to choose
+---
 
-You want zero dependencies
+### 2. Port Management — External Static Server Command
+**Description:** Use a small CLI static server (e.g., `http-server`, `serve`) to host the HTML files and point Puppeteer to `http://localhost`.
 
-You want full control
+#### When to choose
+* **Speed of Implementation:** This is the fastest way to move from `file://` to `http://`.
+* **CI/CD Compatibility:** Works seamlessly in pipeline environments where a server can be run as a background service.
+* **Separation of Concerns:** Keeps the testing logic strictly about testing, not infrastructure.
 
-Tests own the lifecycle
+#### Trade-offs
+* **External Lifecycle:** You must ensure the server is killed properly after tests to avoid "Port already in use" errors.
+* **Reduced Control:** Configuration is limited to what the CLI tool provides.
 
-Trade-offs
+---
 
-Slightly more code
+### 3. The Express-Based Static Server
+**Description:** Use Express to serve static HTML files via `express.static`. This allows easy extension later if routes, middleware, or APIs are needed.
 
-You maintain the server logic
+#### When to choose
+* **Future Growth:** You anticipate moving beyond static files into dynamic content.
+* **API Simulation:** You need to mock backend endpoints or test specific HTTP headers and status codes.
+* **Middleware Needs:** You want to use existing Express plugins for logging or security headers.
 
-<h3>Port Management — External Static Server Command</h3>
+#### Trade-offs
+* **Overkill:** Adds significant weight and complexity for a project that may only ever need to serve static HTML.
+* **Dependency Management:** Introduces a large dependency tree into your `node_modules`.
 
-Description
-Use a small CLI static server (http-server, serve, etc.) to host the HTML
-files, and point Puppeteer to http://localhost.
+---
 
-When to choose
+### Summary Table
 
-Fastest setup
-
-Works great in CI
-
-No server code in repo
-
-Trade-offs
-
-Less control
-
-Server lifecycle handled outside tests
-
-<h3>The Express-Based Static Server</h3>
-
-Description
-Use Express to serve static HTML files via express.static.
-This allows easy extension later if routes, middleware, or APIs are needed.
-
-When to choose
-
-You expect future growth
-
-You may add dynamic behavior later
-
-Trade-offs
-
-Overkill for pure static testing
-
-Extra dependency
-
-Summary table (clarity)
-Option	How many to use	Complexity
-Node HTTP	Pick one	Minimal
-CLI server	Pick one	Minimal
-Express	Pick one	Medium
-
+| Option | Complexity | Dependency Count | Control Level |
+| :--- | :--- | :--- | :--- |
+| **Node HTTP** | Minimal | 0 (Built-in) | High |
+| **CLI Server** | Minimal | 1 (External) | Low |
+| **Express** | Medium | High | Very High |
 
 <h2>Code Structure</h2>
 ....
