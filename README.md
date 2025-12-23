@@ -156,7 +156,84 @@ the test suite runs and shut it down after all tests complete.
 </p>
 
 <h2>Code Structure</h2>
-....
+
+<h3>utils.ts</h3>
+
+```typescript
+import puppeteer from 'puppeteer';
+
+export async function countH2Sections(url: string): Promise<number> {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url);
+  const count = await page.$$eval('h2', elements => elements.length);
+  await browser.close();
+  return count;
+}
+
+```
+
+<h3>utils.test.ts</h3>
+
+```typescript
+import { test, expect } from 'vitest';
+import { countH2Sections } from '../src/utils';
+
+  test('counts h2 sections in sample', async () => {
+    const url = 'http://localhost:3000/sample.html';
+    const count = await countH2Sections(url);
+    expect(count).toBe(3);
+  });
+
+```
+
+<h3>vitest.config.ts</h3>
+
+```typescript
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  test: {
+    globalSetup: './test/global-setup.ts',
+  },
+});
+```
+
+<h3>global-setup.ts</h3>
+
+```typescript
+import sirv from 'sirv';
+import { createServer } from 'http';
+
+let server: ReturnType<typeof createServer>;
+
+/**
+ * Starts a static HTTP server before all tests run.
+ * Serves files from test/data directory on http://localhost:3000
+ */
+export async function setup() {
+  const assets = sirv('test/data', { dev: true });
+  server = createServer(assets);
+
+  await new Promise<void>((resolve) => {
+    server.listen(3000, () => {
+      console.log('Test server running on http://localhost:3000');
+      resolve();
+    });
+  });
+}
+
+/**
+ * Stops the static HTTP server after all tests complete.
+ */
+export async function teardown() {
+  await new Promise<void>((resolve) => {
+    server.close(() => resolve());
+  });
+}
+```
+
+
 
 <h2>Demo</h2>
 without sirv => test error
