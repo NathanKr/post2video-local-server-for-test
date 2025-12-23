@@ -4,7 +4,6 @@ Static Test Server (Vitest + Puppeteer)
 <h2>Project Description</h2>
 A lightweight boilerplate for Puppeteer integration testing that bridges the gap between local static files and real-world browser behavior. By leveraging Vitest’s global lifecycle hooks and sirv, this project ensures test data is served over HTTP, maintaining environment parity for security policies, relative navigation, and fetch requests
 
-
 <h2>Motivation</h2>
 While Puppeteer can load local HTML files using the file:// protocol,
 this environment differs from real-world browser behavior.
@@ -19,8 +18,8 @@ the goal was to serve the test files over HTTP using an adequate solution.
   <li>Browser tests should run over HTTP, not file://</li>
   <li>Vitest globalSetup is ideal for one-time test infrastructure</li>
   <li>sirv provides fast, zero-config static serving for test fixtures</li>
+  <li>sirv maps local directories to URLs (e.g., test/data → http://localhost:3000/)</li>
 </ul>
-
 
 <h2>Installation</h2>
 
@@ -210,8 +209,8 @@ export default defineConfig({
 <h3>global-setup.ts</h3>
 
 ```typescript
-import sirv from 'sirv';
-import { createServer } from 'http';
+import sirv from "sirv";
+import { createServer } from "http";
 
 let server: ReturnType<typeof createServer>;
 
@@ -221,7 +220,8 @@ let server: ReturnType<typeof createServer>;
  */
 export async function setup() {
   const PORT = process.env.TEST_PORT || 3000;
-  const assets = sirv('test/data', { dev: true });
+  // Maps test/data directory to http://localhost:PORT/
+  const assets = sirv("test/data", { dev: true });
   server = createServer(assets);
 
   await new Promise<void>((resolve, reject) => {
@@ -230,8 +230,8 @@ export async function setup() {
       resolve();
     });
 
-    server.on('error', (err: any) => {
-      if (err.code === 'EADDRINUSE') {
+    server.on("error", (err: any) => {
+      if (err.code === "EADDRINUSE") {
         console.error(`Port ${PORT} is already in use. Try setting TEST_PORT.`);
       }
       reject(err);
@@ -255,5 +255,3 @@ export async function teardown() {
 
 <p>With sirv and Vitest — test success:</p>
 <img src="./figs/with-sirv-and-setup.png" alt="Screenshot showing Puppeteer test passing because localhost:3000 is mapped to test/data using sirv"/>
-
-
