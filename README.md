@@ -15,8 +15,7 @@ Relative links, navigation between pages, fetch requests, and security
 rules behave differently when pages are not served over HTTP.
 
 To enable reliable browser tests across multiple static HTML pages,
-the goal was to serve the test files over HTTP using a minimal static
-server, without introducing a build step or application framework.
+the goal was to serve the test files over HTTP using an adequate solution.
 
 <h2>Key Takeaways</h2>
 <ul>
@@ -29,7 +28,7 @@ server, without introducing a build step or application framework.
 
 
 <h2>Usage</h2>
-puputeer
+puppeteer
 vitest
 typescript
 
