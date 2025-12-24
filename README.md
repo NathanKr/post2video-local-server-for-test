@@ -43,6 +43,7 @@ pnpm test
 </ul>
 
 ## Design Options
+When serving static files for browser testing, there are multiple viable approaches, each with distinct trade-offs. This section explores four common patterns, evaluates when each makes sense, and provides a recommendation based on the project's requirements.
 
 ### 1. In-Process Server — Embedded Node HTTP Server
 
@@ -163,6 +164,11 @@ the test suite runs and shut it down after all tests complete.
 </p>
 
 <h2>Code Structure</h2>
+ <p>
+    The following code snippets demonstrate the core implementation of this boilerplate.
+    These files work together to set up the test server lifecycle and provide a simple
+    example of Puppeteer-based testing against locally served static content.
+  </p>
 
 <h3>utils.ts</h3>
 
