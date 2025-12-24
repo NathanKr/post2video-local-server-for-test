@@ -5,10 +5,10 @@ let server: ReturnType<typeof createServer>;
 
 /**
  * Starts a static HTTP server before all tests run.
- * Defaults to port 3000, but respects TEST_PORT env var to avoid collisions.
+ * Defaults to port 8080, but respects TEST_PORT env var to avoid collisions.
  */
 export async function setup() {
-  const PORT = process.env.TEST_PORT || 3000;
+  const PORT = process.env.TEST_PORT || 8080;
 
   // Maps test/data directory to http://localhost:PORT/
   const assets = sirv("test/data", { dev: true });

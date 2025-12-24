@@ -18,7 +18,7 @@ the goal was to serve the test files over HTTP using an adequate solution.
   <li>Browser tests should run over HTTP, not file://</li>
   <li>Vitest globalSetup is ideal for one-time test infrastructure</li>
   <li>sirv provides fast, zero-config static serving for test fixtures</li>
-  <li>sirv maps local directories to URLs (e.g., test/data → http://localhost:3000/)</li>
+  <li>sirv maps local directories to URLs (e.g., test/data → http://localhost:8080/)</li>
 </ul>
 
 <h2>Installation</h2>
@@ -186,7 +186,7 @@ import { test, expect } from "vitest";
 import { countH2Sections } from "../src/utils";
 
 test("counts h2 sections in sample", async () => {
-  const PORT = process.env.TEST_PORT || 3000;
+  const PORT = process.env.TEST_PORT || 8080;
 
   const url = `http://localhost:${PORT}/sample.html`;
   const count = await countH2Sections(url);
@@ -216,10 +216,10 @@ let server: ReturnType<typeof createServer>;
 
 /**
  * Starts a static HTTP server before all tests run.
- * Defaults to port 3000, but respects PORT env var to avoid collisions.
+ * Defaults to port 8080, but respects PORT env var to avoid collisions.
  */
 export async function setup() {
-  const PORT = process.env.TEST_PORT || 3000;
+  const PORT = process.env.TEST_PORT || 8080;
   // Maps test/data directory to http://localhost:PORT/
   const assets = sirv("test/data", { dev: true });
   server = createServer(assets);
@@ -254,4 +254,4 @@ export async function teardown() {
 <img src="./figs/without-sirv-error.png" alt="Screenshot showing Puppeteer test failure when sirv is not used"/>
 
 <p>With sirv and Vitest — test success:</p>
-<img src="./figs/with-sirv-and-setup.png" alt="Screenshot showing Puppeteer test passing because localhost:3000 is mapped to test/data using sirv"/>
+<img src="./figs/with-sirv-and-setup.png" alt="Screenshot showing Puppeteer test passing because localhost:8080 is mapped to test/data using sirv"/>
